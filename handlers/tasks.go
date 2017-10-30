@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"go-echo-vue/models"
+	"github.com/covrom/go-echo-vue/models"
 
 	"github.com/labstack/echo"
 )
