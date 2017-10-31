@@ -1,2 +1,4 @@
-storage.db
 todo
+todo.db
+go-echo-vue.exe
+todo.db.lock

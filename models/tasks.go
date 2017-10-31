@@ -1,14 +1,14 @@
 package models
 
 import (
-	"database/sql"
+	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
+	bolt "github.com/coreos/bbolt"
 )
 
 // Task is a struct containing Task data
 type Task struct {
-	ID   int    `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -18,69 +18,38 @@ type TaskCollection struct {
 }
 
 // GetTasks from the DB
-func GetTasks(db *sql.DB) TaskCollection {
-	sql := "SELECT * FROM tasks"
-	rows, err := db.Query(sql)
-	// Exit if the SQL doesn't work for some reason
-	if err != nil {
-		panic(err)
-	}
-	// make sure to cleanup when the program exits
-	defer rows.Close()
-
+func GetTasks(db *bolt.DB) TaskCollection {
 	result := TaskCollection{}
-	for rows.Next() {
-		task := Task{}
-		err2 := rows.Scan(&task.ID, &task.Name)
-		// Exit if we get an error
-		if err2 != nil {
-			panic(err2)
+	db.View(func(tx *bolt.Tx) error {
+		// Assume bucket exists and has keys
+		b := tx.Bucket([]byte("tasks"))
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			task := Task{ID: string(k), Name: string(v)}
+			result.Tasks = append(result.Tasks, task)
 		}
-		result.Tasks = append(result.Tasks, task)
-	}
+		return nil
+	})
 	return result
 }
 
 // PutTask into DB
-func PutTask(db *sql.DB, name string) (int64, error) {
-	sql := "INSERT INTO tasks(name) VALUES(?)"
-
-	// Create a prepared SQL statement
-	stmt, err := db.Prepare(sql)
-	// Exit if we get an error
-	if err != nil {
-		panic(err)
-	}
-	// Make sure to cleanup after the program exits
-	defer stmt.Close()
-
-	// Replace the '?' in our prepared statement with 'name'
-	result, err2 := stmt.Exec(name)
-	// Exit if we get an error
-	if err2 != nil {
-		panic(err2)
-	}
-
-	return result.LastInsertId()
+func PutTask(db *bolt.DB, name string) (string, error) {
+	var bts string
+	err := db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("tasks"))
+		id, _ := b.NextSequence()
+		bts = fmt.Sprintf("%08d", id)
+		return b.Put([]byte(bts), []byte(name))
+	})
+	return bts, err
 }
 
 // DeleteTask from DB
-func DeleteTask(db *sql.DB, id int) (int64, error) {
-	sql := "DELETE FROM tasks WHERE id = ?"
-
-	// Create a prepared SQL statement
-	stmt, err := db.Prepare(sql)
-	// Exit if we get an error
-	if err != nil {
-		panic(err)
-	}
-
-	// Replace the '?' in our prepared statement with 'id'
-	result, err2 := stmt.Exec(id)
-	// Exit if we get an error
-	if err2 != nil {
-		panic(err2)
-	}
-
-	return result.RowsAffected()
+func DeleteTask(db *bolt.DB, id string) (string, error) {
+	err := db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("tasks"))
+		return b.Delete([]byte(id))
+	})
+	return id, err
 }

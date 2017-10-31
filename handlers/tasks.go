@@ -1,10 +1,9 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
-	"strconv"
 
+	bolt "github.com/coreos/bbolt"
 	"github.com/covrom/go-echo-vue/models"
 
 	"github.com/labstack/echo"
@@ -13,14 +12,14 @@ import (
 type H map[string]interface{}
 
 // GetTasks endpoint
-func GetTasks(db *sql.DB) echo.HandlerFunc {
+func GetTasks(db *bolt.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(http.StatusOK, models.GetTasks(db))
 	}
 }
 
 // PutTask endpoint
-func PutTask(db *sql.DB) echo.HandlerFunc {
+func PutTask(db *bolt.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// Instantiate a new task
 		var task models.Task
@@ -41,9 +40,9 @@ func PutTask(db *sql.DB) echo.HandlerFunc {
 }
 
 // DeleteTask endpoint
-func DeleteTask(db *sql.DB) echo.HandlerFunc {
+func DeleteTask(db *bolt.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strconv.Atoi(c.Param("id"))
+		id := c.Param("id")
 		// Use our new model to delete a task
 		_, err := models.DeleteTask(db, id)
 		// Return a JSON response on success
