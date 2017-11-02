@@ -19,14 +19,14 @@
 </head>
 
 <body>
-    <section class="hero">
+    <section class="hero is-info">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
                     My Tasks
                 </h1>
                 <h2 class="subtitle">
-                    Simple application
+                    Simple application used Go, Vue.js, Bulma, CoreOS BBolt
                 </h2>
             </div>
         </div>
@@ -34,13 +34,17 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-one-quarter">
-                    <ul>
-                        <li class="panel-block list-group-item" v-for="task in tasks">
-                            {{ task.name }}
-                            <a class="delete" v-on:click="deleteTask($index)"></a>
-                        </li>
-                    </ul>
+                <div class="column">
+                    <table class="table">
+                        <tbody>
+                            <tr v-for="task in tasks">
+                                <td>{{ task.name }}</td>
+                                <td>
+                                    <a class="delete" v-on:click="deleteTask($index)"></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <div class="field has-addons">
                         <div class="control">
                             <input type="text" class="input" placeholder="New Task" v-on:keyup.enter="createTask" v-model="newTask.name">
@@ -49,7 +53,6 @@
                             <button class="button is-info" type="button" v-on:click="createTask">Create</button>
                         </div>
                     </div>
-                    <!-- /input-group -->
                 </div>
             </div>
         </div>
