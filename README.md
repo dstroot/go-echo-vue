@@ -9,3 +9,5 @@ go run todo.go
 ```
 
 Then point your browser to http://localhost:8000
+
+![Screenshot](screen.png)
