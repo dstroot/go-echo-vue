@@ -31,5 +31,5 @@
 
 [metadata.heroku]
   root-package = "github.com/covrom/go-echo-vue"
-  go-version = "1.9.2"
+  go-version = "1.9"
   install = [ "./..." ]
