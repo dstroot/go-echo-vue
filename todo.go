@@ -19,7 +19,12 @@ func main() {
 
 	e := echo.New()
 
+	// Static Assets
 	e.File("/", "public/index.html")
+	e.File("/favicon.png", "public/favicon.png")
+	e.File("/favicon.ico", "public/favicon.ico")
+
+	// API
 	e.GET("/tasks", handlers.GetTasks(db))
 	e.PUT("/tasks", handlers.PutTask(db))
 	e.DELETE("/tasks/:id", handlers.DeleteTask(db))

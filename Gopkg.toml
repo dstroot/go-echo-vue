@@ -26,10 +26,9 @@
   version = "1.3.0"
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/covrom/go-echo-vue"
+
+[[constraint]]
   name = "github.com/labstack/echo"
   version = "3.2.3"
-
-[metadata.heroku]
-  root-package = "github.com/covrom/go-echo-vue"
-  go-version = "go1.9"
-  install = [ "./..." ]

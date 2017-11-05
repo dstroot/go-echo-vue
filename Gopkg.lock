@@ -8,6 +8,12 @@
   version = "v1.3.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/covrom/go-echo-vue"
+  packages = ["handlers","models"]
+  revision = "09f7e6d80456e34759635b32b5ad1d7b5634da6d"
+
+[[projects]]
   name = "github.com/labstack/echo"
   packages = ["."]
   revision = "cec7629194fe4bf83b0c72d9a02d340c7a1468ac"
@@ -47,17 +53,17 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["acme","acme/autocert"]
-  revision = "2509b142fb2b797aa7587dad548f113b2c0f20ce"
+  revision = "bd6f299fb381e4c3393d1c4b1f0b94f5e77650c8"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "95c6576299259db960f6c5b9b69ea52422860fce"
+  revision = "8eb05f94d449fdf134ec24630ce69ada5b469c1c"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a5decefda680474785977f62329a5552d9857387f0df3665b867a8e705b30f06"
+  inputs-digest = "f59ca13219c64352f93326eca86afee4ebe0d4a0f1a0e22d202672386ff68c94"
   solver-name = "gps-cdcl"
   solver-version = 1
