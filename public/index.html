@@ -1,120 +1,117 @@
 <html>
+
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>TODO App</title>
+  <title>TODO App</title>
 
-    <!-- Bulma CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Vue.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
+  <!-- Vue.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
+
 </head>
+
 <body>
+
+  <!-- Hero ----------------------------------------------------------------->
+  <section class="hero is-info">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-1">
+            My Tasks
+        </h1>
+        <h2 class="subtitle">
+            Simple application used Go, Vue.js, Bulma, CoreOS BBolt
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- To Do Lis------------------------------------------------------------->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <table class="table">
+            <tbody>
+              <tr v-for="task in tasks">
+                <td>{{ task.name }}</td>
+                <td>
+                  <a class="delete" v-on:click="deleteTask($index)"></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="field has-addons">
+            <div class="control">
+              <input type="text" class="input" placeholder="New Task" v-on:keyup.enter="createTask" v-model="newTask.name">
+            </div>
+            <div class="control">
+              <button class="button is-info" type="button" v-on:click="createTask">
+                Create&nbsp;
+                <i class="fa fa-check"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
   
-    <!-- Hero ----------------------------------------------------------------->
-    <section class="hero is-info">
-        <div class="hero-body">
-            <div class="container">
-                <h1 class="title is-1">
-                    My Tasks
-                </h1>
-                <h2 class="subtitle">
-                    Simple application used Go, Vue.js, Bulma, CoreOS BBolt
-                </h2>
-            </div>
-        </div>
-    </section>
-    
-    <!-- To Do Lis------------------------------------------------------------->
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column">
-                  <ol>
-                    <li v-for="task in tasks">
-                      {{ task.id }} - {{ task.name }}
-                      <a class="delete" v-on:click="deleteTask($index)"></a>
-                    </li>
-                  </ol>
-                  <br>
-                    <!-- <table class="table">
-                        <tbody>
-                            <tr v-for="task in tasks">
-                                <td>{{ task.name }}</td>
-                                <td>
-                                    <a class="delete" v-on:click="deleteTask($index)"></a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> -->
-                    <div class="field has-addons">
-                        <div class="control">
-                            <input type="text" class="input" placeholder="New Task" v-on:keyup.enter="createTask" v-model="newTask.name">
-                        </div>
-                        <div class="control">
-                            <button class="button is-info" type="button" v-on:click="createTask">
-                              Create&nbsp;
-                              <i class="fa fa-check"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Vue Script  ---------------------------------------------------------->
+  <script>
+    new Vue({
+      el: 'body',
 
-    <script>
-        new Vue({
-            el: 'body',
+      data: {
+        tasks: [],
+        newTask: {}
+      },
 
-            data: {
-                tasks: [],
-                newTask: {}
-            },
-
-            // This is run whenever the page is loaded to make sure we have a current task list
-            created: function () {
-                // Use the vue-resource $http client to fetch data from the /tasks route
-                this.$http.get('/tasks').then(function (response) {
-                    this.tasks = response.data.items ? response.data.items : []
-                })
-            },
-
-            methods: {
-                createTask: function () {
-                    if (!this.newTask.name.trim()) {
-                        this.newTask = {}
-                        return
-                    }
-
-                    // Post the new task to the /tasks route using the $http client
-                    this.$http.put('/tasks', this.newTask).success(function (response) {
-                        this.newTask.id = response.created
-                        this.tasks.push(this.newTask)
-                        console.log("Task created!")
-                        console.log(this.newTask)
-                        this.newTask = {}
-                    }).error(function (error) {
-                        console.log(error)
-                    });
-                },
-
-                deleteTask: function (index) {
-                    // Use the $http client to delete a task by its id
-                    this.$http.delete('/tasks/' + this.tasks[index].id).success(function (response) {
-                        this.tasks.splice(index, 1)
-                        console.log("Task deleted!")
-                    }).error(function (error) {
-                        console.log(error)
-                    })
-                }
-            }
+      // This is run whenever the page is loaded to make sure we have a current task list
+      created: function() {
+        // Use the vue-resource $http client to fetch data from the /tasks route
+        this.$http.get('/tasks').then(function(response) {
+          this.tasks = response.data.items ? response.data.items : []
         })
-    </script>
+      },
+
+      methods: {
+        createTask: function() {
+          if (!this.newTask.name.trim()) {
+            this.newTask = {}
+            return
+          }
+
+          // Post the new task to the /tasks route using the $http client
+          this.$http.put('/tasks', this.newTask).success(function(response) {
+            this.newTask.id = response.created
+            this.tasks.push(this.newTask)
+            console.log("Task created!")
+            console.log(this.newTask)
+            this.newTask = {}
+          }).error(function(error) {
+            console.log(error)
+          });
+        },
+
+        deleteTask: function(index) {
+          // Use the $http client to delete a task by its id
+          this.$http.delete('/tasks/' + this.tasks[index].id).success(function(response) {
+            this.tasks.splice(index, 1)
+            console.log("Task deleted!")
+          }).error(function(error) {
+            console.log(error)
+          })
+        }
+      }
+    });
+  </script>
+  
 </body>
 </html>
